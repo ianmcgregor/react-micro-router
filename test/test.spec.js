@@ -1,4 +1,4 @@
-const React = require('React');
+const React = require('react');
 const router = require('../dist/index');
 const Route = router.Route;
 const Link = router.Link;
