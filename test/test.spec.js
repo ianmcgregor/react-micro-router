@@ -111,6 +111,37 @@ describe('Nested route', () => {
 
 });
 
+describe('Route prop', () => {
+    beforeAll(() => {
+        changeURL('/mocked/42');
+
+        function Mocked(props) {
+            return (
+                <div>
+                    <p>{props.route.path}</p>
+                    <p>{props.route.params[0]}</p>
+                </div>
+            );
+        }
+
+        wrapper = enzyme.mount(
+            <Route path="/mocked/([0-9]+)">
+                <Mocked/>
+            </Route>
+        );
+    });
+
+    afterAll(() => {
+        wrapper.unmount();
+    });
+
+    it('should contain children', () => {
+        expect(wrapper.contains(<p>/mocked/([0-9]+)</p>)).toBe(true);
+        expect(wrapper.contains(<p>42</p>)).toBe(true);
+    });
+
+});
+
 describe('Link', () => {
 
     const link = (

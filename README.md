@@ -6,7 +6,7 @@ Bare-bones router for React
 
 ## Features
 
-* Very minimal (< 100 loc)
+* Very minimal (~ 100 loc)
 * Solid and uncomplicated for simple use-cases
 * Declarative API like react-router
 
@@ -77,15 +77,26 @@ export default function App() {
 #### Get current path and regex capture groups
 
 ```javascript
-import {getCurrentPath, getParams} from 'react-micro-router';
+function MyComponent(props) {
+    const {path, params} = props.route;
+    return (
+        <div>
+            <p>{path}</p>
+            <p>{params[0]}</p>
+        </div>
+    );
+}
 
-// example: location.pathname /users/1
-const path = getCurrentPath(); // '/users/[0-9]+'
-const params = getParams(); // ['1']
+<Route path="/hello/([a-z]+)">
+    <MyComponent/>
+</Route>
 
-// example: location.pathname /foo/bar/42
-const path = getCurrentPath(); // '/foo/([a-z]+)/([0-9]+)'
-const params = getParams(); // ['bar', '42']
+// for location.pathname `/hello/world` outputs:
+
+<div>
+    <p>/hello/([a-z]+)</p>
+    <p>world</p>
+</div>
 
 ```
 
@@ -93,4 +104,15 @@ const params = getParams(); // ['bar', '42']
 
 ```javascript
 <Link to="/hello" activeClassName="is-active">Hello</Link>
+```
+
+#### Get current path and regex capture groups from router
+
+```javascript
+import {getCurrentPath, getParams} from 'react-micro-router';
+
+// example: location.pathname /foo/bar/42
+const path = getCurrentPath(); // '/foo/([a-z]+)/([0-9]+)'
+const params = getParams(); // ['bar', '42']
+
 ```

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, cloneElement} from 'react';
 
 export const routes = [];
 
@@ -42,7 +42,19 @@ export class Route extends Component {
             return null;
         }
 
-        return <div>{children}</div>;
+        let childNodes = React.Children.toArray(children);
+
+        if (childNodes.length) {
+            const params = getParams(path);
+
+            childNodes = childNodes.map((child, i) => {
+                if (typeof child.type === 'string' || child.type === Route) {
+                    return child;
+                }
+                return cloneElement(child, {key: `child${i}`, route: {params, path}});
+            });
+        }
+        return <div>{childNodes}</div>;
     }
 }
 
@@ -52,7 +64,6 @@ export function redirect(path, replace = false) {
 }
 
 export function Link({children, className, to, href, replace = false, activeClassName = 'active'}) {
-
     const path = to || href;
 
     function onClick(event) {
@@ -72,9 +83,11 @@ export function Link({children, className, to, href, replace = false, activeClas
 }
 
 export function getCurrentPath() {
-    return routes
+    const lastRoute = routes
         .filter(route => isMatch(route.props.path, !!route.props.exact))
-        .pop().props.path;
+        .pop();
+
+    return lastRoute ? lastRoute.props.path : '';
 }
 
 export function getParams(path) {
@@ -87,7 +100,5 @@ export function getParams(path) {
 
 // allow tests to override
 export const location = {
-    path() {
-        return window.location.pathname;
-    }
+    path: () => window.location.pathname
 };

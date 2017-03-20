@@ -71,10 +71,22 @@ var Route = exports.Route = function (_Component) {
             return null;
         }
 
+        var childNodes = _react2.default.Children.toArray(children);
+
+        if (childNodes.length) {
+            var params = getParams(path);
+
+            childNodes = childNodes.map(function (child, i) {
+                if (typeof child.type === 'string' || child.type === Route) {
+                    return child;
+                }
+                return (0, _react.cloneElement)(child, { key: 'child' + i, route: { params: params, path: path } });
+            });
+        }
         return _react2.default.createElement(
             'div',
             null,
-            children
+            childNodes
         );
     };
 
@@ -100,7 +112,6 @@ function Link(_ref) {
         _ref$activeClassName = _ref.activeClassName,
         activeClassName = _ref$activeClassName === undefined ? 'active' : _ref$activeClassName;
 
-
     var path = to || href;
 
     function onClick(event) {
@@ -120,9 +131,11 @@ function Link(_ref) {
 }
 
 function getCurrentPath() {
-    return routes.filter(function (route) {
+    var lastRoute = routes.filter(function (route) {
         return isMatch(route.props.path, !!route.props.exact);
-    }).pop().props.path;
+    }).pop();
+
+    return lastRoute ? lastRoute.props.path : '';
 }
 
 function getParams(path) {
