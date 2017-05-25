@@ -1,6 +1,6 @@
 {
   "name": "react-micro-router",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Bare-bones router for React",
   "main": "dist/index.js",
   "scripts": {
@@ -25,8 +25,11 @@
     "eslint-plugin-react": "^6.10.0",
     "jest": "^19.0.2",
     "mocha": "^3.2.0",
-    "react": "^15.4.2",
     "react-addons-test-utils": "^15.4.2",
     "react-dom": "^15.4.2"
+  },
+  "dependencies": {
+    "react": "^15.4.2",
+    "react-transition-group": "^1.1.3"
   }
 }

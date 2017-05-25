@@ -63,11 +63,15 @@ export default function App() {
 
 ```javascript
 <Route path="/">
+    <AlwaysHere/>
+    <Route path="/($|other)">
+        <RootOrOther/>
+    </Route>
     <Route path="/things" exact>
         <Link to="/things/1">Thing 1</Link>
-        <Link to="/things/2">Thing 2</Link>
+        <Link to="/things/two">Thing Two</Link>
     </Route>
-    <Route path="/things/([0-9]+)">
+    <Route path="/things/([0-9a-z]+)">
         <Thing/>
         <Link to="/things">Back</Link>
     </Route>
@@ -100,10 +104,79 @@ function MyComponent(props) {
 
 ```
 
+#### Transitions (see [CSSTransitionGroup](https://github.com/reactjs/react-transition-group) for details)
+
+```javascript
+
+const transition = {
+    name: 'Transition',
+    appear: true,
+    appearTimeout: 400,
+    enter: true,
+    enterTimeout: 600,
+    leave: true,
+    leaveTimeout: 400
+};
+
+function App() {
+    return (
+        <Route className="App" path="/">
+            <Header/>
+            <Route path="/" exact transition={transition}>
+                <Oh/>
+            </Route>
+            <Route path="/yes" transition={transition}>
+                <Yes/>
+            </Route>
+            <Footer/>
+        </Route>
+    );
+}
+```
+```css
+.Transition-enter {
+    opacity: 0;
+}
+
+.Transition-enter.Transition-enter-active {
+    opacity: 1;
+    transition: opacity 400ms ease-in 200ms;
+}
+
+.Transition-leave {
+    opacity: 1;
+}
+
+.Transition-leave.Transition-leave-active {
+    opacity: 0;
+    transition: opacity 400ms ease-out;
+}
+
+.Transition-appear {
+    opacity: 0;
+}
+
+.Transition-appear.Transition-appear-active {
+    opacity: 1;
+    transition: opacity 400ms ease-in;
+}
+```
+
 #### Link supports `activeClassName` (it defaults to `active`).
 
 ```javascript
 <Link to="/hello" activeClassName="is-active">Hello</Link>
+// for route /hello renders <a class="is-active">Hello</a>
+
+<Link to="/" className="Link" activeClassName="current">Home</Link>
+// for route / renders  <a class="Link current">Home</a>
+```
+
+#### Control link active state using Regex
+
+```javascript
+// links to / but will be active for / and /also
+<Link to="/" match="/($|also)">Hello</Link>
 ```
 
 #### Get current path and regex capture groups from router

@@ -1,7 +1,7 @@
 'use strict';
 
 exports.__esModule = true;
-exports.location = exports.Route = exports.routes = undefined;
+exports.Route = exports.location = exports.routes = undefined;
 exports.isMatch = isMatch;
 exports.redirect = redirect;
 exports.Link = Link;
@@ -11,6 +11,10 @@ exports.getParams = getParams;
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
+
+var _CSSTransitionGroup = require('react-transition-group/CSSTransitionGroup');
+
+var _CSSTransitionGroup2 = _interopRequireDefault(_CSSTransitionGroup);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -22,9 +26,20 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var routes = exports.routes = [];
 
+// allow tests to override
+var location = exports.location = {
+    path: function path() {
+        return window.location.pathname;
+    }
+};
+
 function isMatch(path, exact) {
     if (!path) {
         return false;
+    }
+
+    if (location.path() === path) {
+        return true;
     }
 
     if (exact && location.path() !== path) {
@@ -37,10 +52,10 @@ function isMatch(path, exact) {
 var Route = exports.Route = function (_Component) {
     _inherits(Route, _Component);
 
-    function Route() {
+    function Route(props) {
         _classCallCheck(this, Route);
 
-        var _this = _possibleConstructorReturn(this, _Component.call(this));
+        var _this = _possibleConstructorReturn(this, _Component.call(this, props));
 
         _this.onPopState = _this.onPopState.bind(_this);
         return _this;
@@ -64,14 +79,14 @@ var Route = exports.Route = function (_Component) {
         var _props = this.props,
             path = _props.path,
             exact = _props.exact,
-            children = _props.children;
+            children = _props.children,
+            transition = _props.transition,
+            className = _props.className;
 
 
-        if (!isMatch(path, exact)) {
-            return null;
-        }
+        var active = isMatch(path, exact);
 
-        var childNodes = _react2.default.Children.toArray(children);
+        var childNodes = active ? _react2.default.Children.toArray(children) : [];
 
         if (childNodes.length) {
             var params = getParams(path);
@@ -83,9 +98,35 @@ var Route = exports.Route = function (_Component) {
                 return (0, _react.cloneElement)(child, { key: 'child' + i, route: { params: params, path: path } });
             });
         }
+
+        if (!transition) {
+            return _react2.default.createElement(
+                'span',
+                { className: className },
+                childNodes
+            );
+        }
+
+        var name = transition.name,
+            enterTimeout = transition.enterTimeout,
+            leaveTimeout = transition.leaveTimeout,
+            appear = transition.appear,
+            appearTimeout = transition.appearTimeout,
+            enter = transition.enter,
+            leave = transition.leave;
+
+
         return _react2.default.createElement(
-            'div',
-            null,
+            _CSSTransitionGroup2.default,
+            {
+                className: className,
+                transitionName: name,
+                transitionAppear: appear,
+                transitionAppearTimeout: appearTimeout,
+                transitionEnter: enter,
+                transitionEnterTimeout: enterTimeout,
+                transitionLeave: leave,
+                transitionLeaveTimeout: leaveTimeout },
             childNodes
         );
     };
@@ -110,7 +151,9 @@ function Link(_ref) {
         _ref$replace = _ref.replace,
         replace = _ref$replace === undefined ? false : _ref$replace,
         _ref$activeClassName = _ref.activeClassName,
-        activeClassName = _ref$activeClassName === undefined ? 'active' : _ref$activeClassName;
+        activeClassName = _ref$activeClassName === undefined ? 'active' : _ref$activeClassName,
+        _ref$match = _ref.match,
+        match = _ref$match === undefined ? null : _ref$match;
 
     var path = to || href;
 
@@ -119,7 +162,7 @@ function Link(_ref) {
         redirect(path, replace);
     }
 
-    if (isMatch(path, path === '/')) {
+    if (isMatch(path, path === '/') || match && isMatch(match, false)) {
         className = (className + ' ' + activeClassName).trim();
     }
 
@@ -143,12 +186,11 @@ function getParams(path) {
         path = getCurrentPath();
     }
 
-    return location.path().match(new RegExp('^' + path)).slice(1);
-}
+    var matches = location.path().match(new RegExp('^' + path));
 
-// allow tests to override
-var location = exports.location = {
-    path: function path() {
-        return window.location.pathname;
+    if (!matches) {
+        return [];
     }
-};
+
+    return matches.slice(1);
+}

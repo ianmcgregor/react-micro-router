@@ -1,10 +1,20 @@
 import React, {Component, cloneElement} from 'react';
+import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 export const routes = [];
+
+// allow tests to override
+export const location = {
+    path: () => window.location.pathname
+};
 
 export function isMatch(path, exact) {
     if (!path) {
         return false;
+    }
+
+    if (location.path() === path) {
+        return true;
     }
 
     if (exact && location.path() !== path) {
@@ -15,8 +25,8 @@ export function isMatch(path, exact) {
 }
 
 export class Route extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.onPopState = this.onPopState.bind(this);
     }
@@ -36,13 +46,11 @@ export class Route extends Component {
     }
 
     render() {
-        const {path, exact, children} = this.props;
+        const {path, exact, children, transition, className} = this.props;
 
-        if (!isMatch(path, exact)) {
-            return null;
-        }
+        const active = isMatch(path, exact);
 
-        let childNodes = React.Children.toArray(children);
+        let childNodes = active ? React.Children.toArray(children) : [];
 
         if (childNodes.length) {
             const params = getParams(path);
@@ -54,7 +62,34 @@ export class Route extends Component {
                 return cloneElement(child, {key: `child${i}`, route: {params, path}});
             });
         }
-        return <div>{childNodes}</div>;
+
+        if (!transition) {
+            return <span className={className}>{childNodes}</span>;
+        }
+
+        const {
+            name,
+            enterTimeout,
+            leaveTimeout,
+            appear,
+            appearTimeout,
+            enter,
+            leave
+        } = transition;
+
+        return (
+            <CSSTransitionGroup
+                className={className}
+                transitionName={name}
+                transitionAppear={appear}
+                transitionAppearTimeout={appearTimeout}
+                transitionEnter={enter}
+                transitionEnterTimeout={enterTimeout}
+                transitionLeave={leave}
+                transitionLeaveTimeout={leaveTimeout}>
+                {childNodes}
+            </CSSTransitionGroup>
+        );
     }
 }
 
@@ -63,7 +98,7 @@ export function redirect(path, replace = false) {
     routes.forEach(route => route.forceUpdate());
 }
 
-export function Link({children, className, to, href, replace = false, activeClassName = 'active'}) {
+export function Link({children, className, to, href, replace = false, activeClassName = 'active', match = null}) {
     const path = to || href;
 
     function onClick(event) {
@@ -71,7 +106,7 @@ export function Link({children, className, to, href, replace = false, activeClas
         redirect(path, replace);
     }
 
-    if (isMatch(path, path === '/')) {
+    if (isMatch(path, path === '/') || (match && isMatch(match, false))) {
         className = `${className} ${activeClassName}`.trim();
     }
 
@@ -95,10 +130,11 @@ export function getParams(path) {
         path = getCurrentPath();
     }
 
-    return location.path().match(new RegExp(`^${path}`)).slice(1);
-}
+    const matches = location.path().match(new RegExp(`^${path}`));
 
-// allow tests to override
-export const location = {
-    path: () => window.location.pathname
-};
+    if (!matches) {
+        return [];
+    }
+
+    return matches.slice(1);
+}
