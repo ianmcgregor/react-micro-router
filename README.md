@@ -104,7 +104,7 @@ function MyComponent(props) {
 
 ```
 
-#### Transitions (see [CSSTransitionGroup](https://github.com/reactjs/react-transition-group) for details)
+#### Transitions (see [react-transition-group](https://github.com/reactjs/react-transition-group) for details)
 
 ```javascript
 

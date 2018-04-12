@@ -6,6 +6,9 @@ const getCurrentPath = router.getCurrentPath;
 const getParams = router.getParams;
 // const jsdom = require('jsdom');
 const enzyme = require('enzyme');
+const adapter = require("enzyme-adapter-react-16");
+
+enzyme.configure({ adapter: new adapter() });
 
 // broken in jest env:
 // jsdom.changeURL(window, 'https://example.com/');
