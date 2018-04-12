@@ -1,5 +1,6 @@
 import React, {Component, cloneElement} from 'react';
-import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import CSSTransition from "react-transition-group/CSSTransition";
+import TransitionGroup from 'react-transition-group/TransitionGroup';
 
 export const routes = [];
 
@@ -78,17 +79,19 @@ export class Route extends Component {
         } = transition;
 
         return (
-            <CSSTransitionGroup
-                className={className}
-                transitionName={name}
-                transitionAppear={appear}
-                transitionAppearTimeout={appearTimeout}
-                transitionEnter={enter}
-                transitionEnterTimeout={enterTimeout}
-                transitionLeave={leave}
-                transitionLeaveTimeout={leaveTimeout}>
+            <TransitionGroup>
+                <CSSTransition
+                    className={className}
+                    transitionName={name}
+                    transitionAppear={appear}
+                    transitionAppearTimeout={appearTimeout}
+                    transitionEnter={enter}
+                    transitionEnterTimeout={enterTimeout}
+                    transitionLeave={leave}
+                    transitionLeaveTimeout={leaveTimeout}>
                 {childNodes}
-            </CSSTransitionGroup>
+                </CSSTransition>
+            </TransitionGroup>
         );
     }
 }

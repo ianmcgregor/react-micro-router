@@ -12,9 +12,13 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-var _CSSTransitionGroup = require('react-transition-group/CSSTransitionGroup');
+var _CSSTransition = require('react-transition-group/CSSTransition');
 
-var _CSSTransitionGroup2 = _interopRequireDefault(_CSSTransitionGroup);
+var _CSSTransition2 = _interopRequireDefault(_CSSTransition);
+
+var _TransitionGroup = require('react-transition-group/TransitionGroup');
+
+var _TransitionGroup2 = _interopRequireDefault(_TransitionGroup);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -117,17 +121,21 @@ var Route = exports.Route = function (_Component) {
 
 
         return _react2.default.createElement(
-            _CSSTransitionGroup2.default,
-            {
-                className: className,
-                transitionName: name,
-                transitionAppear: appear,
-                transitionAppearTimeout: appearTimeout,
-                transitionEnter: enter,
-                transitionEnterTimeout: enterTimeout,
-                transitionLeave: leave,
-                transitionLeaveTimeout: leaveTimeout },
-            childNodes
+            _TransitionGroup2.default,
+            null,
+            _react2.default.createElement(
+                _CSSTransition2.default,
+                {
+                    className: className,
+                    transitionName: name,
+                    transitionAppear: appear,
+                    transitionAppearTimeout: appearTimeout,
+                    transitionEnter: enter,
+                    transitionEnterTimeout: enterTimeout,
+                    transitionLeave: leave,
+                    transitionLeaveTimeout: leaveTimeout },
+                childNodes
+            )
         );
     };
 
