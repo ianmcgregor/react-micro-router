@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 exports.__esModule = true;
 exports.Route = exports.location = exports.routes = undefined;
@@ -8,15 +8,15 @@ exports.Link = Link;
 exports.getCurrentPath = getCurrentPath;
 exports.getParams = getParams;
 
-var _react = require('react');
+var _react = require("react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var _CSSTransition = require('react-transition-group/CSSTransition');
+var _CSSTransition = require("react-transition-group/CSSTransition");
 
 var _CSSTransition2 = _interopRequireDefault(_CSSTransition);
 
-var _TransitionGroup = require('react-transition-group/TransitionGroup');
+var _TransitionGroup = require("react-transition-group/TransitionGroup");
 
 var _TransitionGroup2 = _interopRequireDefault(_TransitionGroup);
 
@@ -42,15 +42,15 @@ function isMatch(path, exact) {
         return false;
     }
 
-    if (location.path() === path) {
-        return true;
-    }
-
     if (exact && location.path() !== path) {
         return false;
     }
 
-    return new RegExp('^' + path).test(location.path());
+    if (location.path() === path) {
+        return true;
+    }
+
+    return new RegExp("^" + path).test(location.path());
 }
 
 var Route = exports.Route = function (_Component) {
@@ -99,13 +99,13 @@ var Route = exports.Route = function (_Component) {
                 if (typeof child.type === 'string' || child.type === Route) {
                     return child;
                 }
-                return (0, _react.cloneElement)(child, { key: 'child' + i, route: { params: params, path: path } });
+                return (0, _react.cloneElement)(child, { key: "child" + i, route: { params: params, path: path } });
             });
         }
 
         if (!transition) {
             return _react2.default.createElement(
-                'span',
+                "span",
                 { className: className },
                 childNodes
             );
@@ -154,12 +154,14 @@ function redirect(path) {
 function Link(_ref) {
     var children = _ref.children,
         className = _ref.className,
+        _ref$exact = _ref.exact,
+        exact = _ref$exact === undefined ? false : _ref$exact,
         to = _ref.to,
         href = _ref.href,
         _ref$replace = _ref.replace,
         replace = _ref$replace === undefined ? false : _ref$replace,
         _ref$activeClassName = _ref.activeClassName,
-        activeClassName = _ref$activeClassName === undefined ? 'active' : _ref$activeClassName,
+        activeClassName = _ref$activeClassName === undefined ? "active" : _ref$activeClassName,
         _ref$match = _ref.match,
         match = _ref$match === undefined ? null : _ref$match;
 
@@ -170,12 +172,12 @@ function Link(_ref) {
         redirect(path, replace);
     }
 
-    if (isMatch(path, path === '/') || match && isMatch(match, false)) {
-        className = (className + ' ' + activeClassName).trim();
+    if (isMatch(path, exact ? exact : path === "/") || match && isMatch(match, exact)) {
+        className = (className + " " + activeClassName).trim();
     }
 
     return _react2.default.createElement(
-        'a',
+        "a",
         { className: className, href: path, onClick: onClick },
         children
     );
@@ -194,7 +196,7 @@ function getParams(path) {
         path = getCurrentPath();
     }
 
-    var matches = location.path().match(new RegExp('^' + path));
+    var matches = location.path().match(new RegExp("^" + path));
 
     if (!matches) {
         return [];
