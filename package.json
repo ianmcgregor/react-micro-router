@@ -9,6 +9,9 @@
   },
   "keywords": [],
   "author": "",
+  "jest": {
+    "testURL": "http://localhost/"
+  },
   "license": "ISC",
   "repository": {
     "type": "git",
@@ -26,10 +29,10 @@
     "eslint-plugin-react": "^7.7.0",
     "jest": "^22.1.4",
     "mocha": "^3.2.0",
-    "react-dom": "^16.2.0"
+    "react-dom": "16.3.0"
   },
   "dependencies": {
-    "react": "^16.2.0",
+    "react": "16.3.0",
     "react-transition-group": "^2.2.1"
   }
 }

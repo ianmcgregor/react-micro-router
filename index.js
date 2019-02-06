@@ -1,6 +1,6 @@
-import React, {Component, cloneElement} from 'react';
+import React, { Component, cloneElement } from "react";
 import CSSTransition from "react-transition-group/CSSTransition";
-import TransitionGroup from 'react-transition-group/TransitionGroup';
+import TransitionGroup from "react-transition-group/TransitionGroup";
 
 export const routes = [];
 
@@ -14,12 +14,12 @@ export function isMatch(path, exact) {
         return false;
     }
 
-    if (location.path() === path) {
-        return true;
-    }
-
     if (exact && location.path() !== path) {
         return false;
+    }
+
+    if (location.path() === path) {
+        return true;
     }
 
     return new RegExp(`^${path}`).test(location.path());
@@ -101,7 +101,16 @@ export function redirect(path, replace = false) {
     routes.forEach(route => route.forceUpdate());
 }
 
-export function Link({children, className, to, href, replace = false, activeClassName = 'active', match = null}) {
+export function Link({
+    children,
+    className,
+    exact = false,
+    to,
+    href,
+    replace = false,
+    activeClassName = "active",
+    match = null
+}) {
     const path = to || href;
 
     function onClick(event) {
@@ -109,7 +118,10 @@ export function Link({children, className, to, href, replace = false, activeClas
         redirect(path, replace);
     }
 
-    if (isMatch(path, path === '/') || (match && isMatch(match, false))) {
+    if (
+        isMatch(path, exact ? exact : path === "/") ||
+        (match && isMatch(match, exact))
+    ) {
         className = `${className} ${activeClassName}`.trim();
     }
 
