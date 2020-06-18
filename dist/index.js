@@ -65,7 +65,7 @@ var Route = exports.Route = function (_Component) {
         return _this;
     }
 
-    Route.prototype.componentDidMount = function componentDidMount() {
+    Route.prototype.UNSAFE_componentWillMount = function UNSAFE_componentWillMount() {
         window.addEventListener('popstate', this.onPopState);
         routes.push(this);
     };
