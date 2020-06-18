@@ -32,7 +32,7 @@ export class Route extends Component {
         this.onPopState = this.onPopState.bind(this);
     }
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         window.addEventListener('popstate', this.onPopState);
         routes.push(this);
     }

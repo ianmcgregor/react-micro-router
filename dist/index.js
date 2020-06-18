@@ -65,7 +65,7 @@ var Route = exports.Route = function (_Component) {
         return _this;
     }
 
-    Route.prototype.componentWillMount = function componentWillMount() {
+    Route.prototype.componentDidMount = function componentDidMount() {
         window.addEventListener('popstate', this.onPopState);
         routes.push(this);
     };
