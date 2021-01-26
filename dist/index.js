@@ -1,206 +1,198 @@
 "use strict";
 
-exports.__esModule = true;
-exports.Route = exports.location = exports.routes = undefined;
+require("core-js/modules/es.regexp.constructor.js");
+
+require("core-js/modules/es.regexp.to-string.js");
+
+require("core-js/modules/es.string.match.js");
+
+require("core-js/modules/es.string.replace.js");
+
+require("core-js/modules/es.string.trim.js");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 exports.isMatch = isMatch;
 exports.redirect = redirect;
 exports.Link = Link;
 exports.getCurrentPath = getCurrentPath;
 exports.getParams = getParams;
+exports.Route = exports.location = exports.routes = void 0;
 
-var _react = require("react");
+var _react = _interopRequireWildcard(require("react"));
 
-var _react2 = _interopRequireDefault(_react);
+var _CSSTransition = _interopRequireDefault(require("react-transition-group/CSSTransition"));
 
-var _CSSTransition = require("react-transition-group/CSSTransition");
-
-var _CSSTransition2 = _interopRequireDefault(_CSSTransition);
-
-var _TransitionGroup = require("react-transition-group/TransitionGroup");
-
-var _TransitionGroup2 = _interopRequireDefault(_TransitionGroup);
+var _TransitionGroup = _interopRequireDefault(require("react-transition-group/TransitionGroup"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
 
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
-var routes = exports.routes = [];
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 
-// allow tests to override
-var location = exports.location = {
-    path: function path() {
-        return window.location.pathname;
-    }
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+const routes = []; // allow tests to override
+
+exports.routes = routes;
+const location = {
+  path: () => window.location.pathname
 };
+exports.location = location;
 
 function isMatch(path, exact) {
-    if (!path) {
-        return false;
-    }
+  if (!path) {
+    return false;
+  }
 
-    if (exact && location.path() !== path) {
-        return false;
-    }
+  if (exact && location.path() !== path) {
+    return false;
+  }
 
-    if (location.path() === path) {
-        return true;
-    }
+  if (location.path() === path) {
+    return true;
+  }
 
-    return new RegExp("^" + path).test(location.path());
+  return new RegExp("^".concat(path)).test(location.path());
 }
 
-var Route = exports.Route = function (_Component) {
-    _inherits(Route, _Component);
+class Route extends _react.Component {
+  constructor(props) {
+    super(props);
+    this.onPopState = this.onPopState.bind(this);
+  }
 
-    function Route(props) {
-        _classCallCheck(this, Route);
+  UNSAFE_componentWillMount() {
+    window.addEventListener('popstate', this.onPopState);
+    routes.push(this);
+  }
 
-        var _this = _possibleConstructorReturn(this, _Component.call(this, props));
+  componentWillUnmount() {
+    window.removeEventListener('popstate', this.onPopState);
+    routes.splice(routes.indexOf(this), 1);
+  }
 
-        _this.onPopState = _this.onPopState.bind(_this);
-        return _this;
+  onPopState() {
+    this.forceUpdate();
+  }
+
+  render() {
+    const {
+      path,
+      exact,
+      children,
+      transition,
+      className
+    } = this.props;
+    const active = isMatch(path, exact);
+    let childNodes = active ? _react.default.Children.toArray(children) : [];
+
+    if (childNodes.length) {
+      const params = getParams(path);
+      childNodes = childNodes.map((child, i) => {
+        if (typeof child.type === 'string' || child.type === Route) {
+          return child;
+        }
+
+        return /*#__PURE__*/(0, _react.cloneElement)(child, {
+          key: "child".concat(i),
+          route: {
+            params,
+            path
+          }
+        });
+      });
     }
 
-    Route.prototype.UNSAFE_componentWillMount = function UNSAFE_componentWillMount() {
-        window.addEventListener('popstate', this.onPopState);
-        routes.push(this);
-    };
+    if (!transition) {
+      return /*#__PURE__*/_react.default.createElement("span", {
+        className: className
+      }, childNodes);
+    }
 
-    Route.prototype.componentWillUnmount = function componentWillUnmount() {
-        window.removeEventListener('popstate', this.onPopState);
-        routes.splice(routes.indexOf(this), 1);
-    };
+    const {
+      name,
+      enterTimeout,
+      leaveTimeout,
+      appear,
+      appearTimeout,
+      enter,
+      leave
+    } = transition;
+    return /*#__PURE__*/_react.default.createElement(_TransitionGroup.default, null, /*#__PURE__*/_react.default.createElement(_CSSTransition.default, {
+      className: className,
+      transitionName: name,
+      transitionAppear: appear,
+      transitionAppearTimeout: appearTimeout,
+      transitionEnter: enter,
+      transitionEnterTimeout: enterTimeout,
+      transitionLeave: leave,
+      transitionLeaveTimeout: leaveTimeout
+    }, childNodes));
+  }
 
-    Route.prototype.onPopState = function onPopState() {
-        this.forceUpdate();
-    };
+}
 
-    Route.prototype.render = function render() {
-        var _props = this.props,
-            path = _props.path,
-            exact = _props.exact,
-            children = _props.children,
-            transition = _props.transition,
-            className = _props.className;
-
-
-        var active = isMatch(path, exact);
-
-        var childNodes = active ? _react2.default.Children.toArray(children) : [];
-
-        if (childNodes.length) {
-            var params = getParams(path);
-
-            childNodes = childNodes.map(function (child, i) {
-                if (typeof child.type === 'string' || child.type === Route) {
-                    return child;
-                }
-                return (0, _react.cloneElement)(child, { key: "child" + i, route: { params: params, path: path } });
-            });
-        }
-
-        if (!transition) {
-            return _react2.default.createElement(
-                "span",
-                { className: className },
-                childNodes
-            );
-        }
-
-        var name = transition.name,
-            enterTimeout = transition.enterTimeout,
-            leaveTimeout = transition.leaveTimeout,
-            appear = transition.appear,
-            appearTimeout = transition.appearTimeout,
-            enter = transition.enter,
-            leave = transition.leave;
-
-
-        return _react2.default.createElement(
-            _TransitionGroup2.default,
-            null,
-            _react2.default.createElement(
-                _CSSTransition2.default,
-                {
-                    className: className,
-                    transitionName: name,
-                    transitionAppear: appear,
-                    transitionAppearTimeout: appearTimeout,
-                    transitionEnter: enter,
-                    transitionEnterTimeout: enterTimeout,
-                    transitionLeave: leave,
-                    transitionLeaveTimeout: leaveTimeout },
-                childNodes
-            )
-        );
-    };
-
-    return Route;
-}(_react.Component);
+exports.Route = Route;
 
 function redirect(path) {
-    var replace = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-    window.history[replace ? 'replaceState' : 'pushState']({}, null, path);
-    routes.forEach(function (route) {
-        return route.forceUpdate();
-    });
+  let replace = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  window.history[replace ? 'replaceState' : 'pushState']({}, null, path);
+  routes.forEach(route => route.forceUpdate());
 }
 
 function Link(_ref) {
-    var children = _ref.children,
-        className = _ref.className,
-        _ref$exact = _ref.exact,
-        exact = _ref$exact === undefined ? false : _ref$exact,
-        to = _ref.to,
-        href = _ref.href,
-        _ref$replace = _ref.replace,
-        replace = _ref$replace === undefined ? false : _ref$replace,
-        _ref$activeClassName = _ref.activeClassName,
-        activeClassName = _ref$activeClassName === undefined ? "active" : _ref$activeClassName,
-        _ref$match = _ref.match,
-        match = _ref$match === undefined ? null : _ref$match;
+  let {
+    children,
+    className,
+    exact = false,
+    to,
+    href,
+    replace = false,
+    activeClassName = "active",
+    match = null
+  } = _ref,
+      rest = _objectWithoutProperties(_ref, ["children", "className", "exact", "to", "href", "replace", "activeClassName", "match"]);
 
-    var path = to || href;
+  const path = to || href;
 
-    function onClick(event) {
-        event.preventDefault();
-        redirect(path, replace);
-    }
+  function onClick(event) {
+    event.preventDefault();
+    redirect(path, replace);
+  }
 
-    if (isMatch(path, exact ? exact : path === "/") || match && isMatch(match, exact)) {
-        className = (className + " " + activeClassName).trim();
-    }
+  if (isMatch(path, exact ? exact : path === "/") || match && isMatch(match, exact)) {
+    className = "".concat(className, " ").concat(activeClassName).trim();
+  }
 
-    return _react2.default.createElement(
-        "a",
-        { className: className, href: path, onClick: onClick },
-        children
-    );
+  return /*#__PURE__*/_react.default.createElement("a", _extends({
+    className: className,
+    href: path,
+    onClick: onClick
+  }, rest), children);
 }
 
 function getCurrentPath() {
-    var lastRoute = routes.filter(function (route) {
-        return isMatch(route.props.path, !!route.props.exact);
-    }).pop();
-
-    return lastRoute ? lastRoute.props.path : '';
+  const lastRoute = routes.filter(route => isMatch(route.props.path, !!route.props.exact)).pop();
+  return lastRoute ? lastRoute.props.path : '';
 }
 
 function getParams(path) {
-    if (!path) {
-        path = getCurrentPath();
-    }
+  if (!path) {
+    path = getCurrentPath();
+  }
 
-    var matches = location.path().match(new RegExp("^" + path));
+  const matches = location.path().match(new RegExp("^".concat(path)));
 
-    if (!matches) {
-        return [];
-    }
+  if (!matches) {
+    return [];
+  }
 
-    return matches.slice(1);
+  return matches.slice(1);
 }

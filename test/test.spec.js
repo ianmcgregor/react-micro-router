@@ -6,7 +6,7 @@ const getCurrentPath = router.getCurrentPath;
 const getParams = router.getParams;
 // const jsdom = require('jsdom');
 const enzyme = require("enzyme");
-const adapter = require("enzyme-adapter-react-16");
+const adapter = require("@wojtekmaj/enzyme-adapter-react-17");
 
 enzyme.configure({ adapter: new adapter() });
 
@@ -151,11 +151,11 @@ describe("Link", () => {
         expect(enzyme.mount(link).prop("to")).toEqual("/hello");
     });
 
-    xit("should have href", () => {
+    it("should have href", () => {
         expect(enzyme.shallow(link).prop("href")).toEqual("/hello");
     });
 
-    xit("should have onClick", () => {
+    it("should have onClick", () => {
         expect(typeof enzyme.shallow(link).props().onClick).toEqual("function");
     });
 });
