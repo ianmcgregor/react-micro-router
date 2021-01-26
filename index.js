@@ -109,7 +109,8 @@ export function Link({
     href,
     replace = false,
     activeClassName = "active",
-    match = null
+    match = null,
+    ...rest
 }) {
     const path = to || href;
 
@@ -126,7 +127,7 @@ export function Link({
     }
 
     return (
-        <a className={className} href={path} onClick={onClick}>
+        <a className={className} href={path} onClick={onClick} {...rest}>
             {children}
         </a>
     );
