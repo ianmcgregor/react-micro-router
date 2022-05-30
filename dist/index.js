@@ -26,6 +26,8 @@ var _CSSTransition = _interopRequireDefault(require("react-transition-group/CSST
 
 var _TransitionGroup = _interopRequireDefault(require("react-transition-group/TransitionGroup"));
 
+var _utils = require("./utils");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
@@ -46,7 +48,9 @@ const location = {
 };
 exports.location = location;
 
-function isMatch(path, exact) {
+function isMatch(path) {
+  let exact = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
   if (!path) {
     return false;
   }
@@ -96,6 +100,10 @@ class Route extends _react.Component {
     if (childNodes.length) {
       const params = getParams(path);
       childNodes = childNodes.map((child, i) => {
+        if (!(0, _utils.isReactElement)(child)) {
+          return child;
+        }
+
         if (typeof child.type === 'string' || child.type === Route) {
           return child;
         }
@@ -143,7 +151,7 @@ exports.Route = Route;
 
 function redirect(path) {
   let replace = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-  window.history[replace ? 'replaceState' : 'pushState']({}, null, path);
+  window.history[replace ? 'replaceState' : 'pushState']({}, "", path);
   routes.forEach(route => route.forceUpdate());
 }
 
@@ -160,12 +168,12 @@ function Link(_ref) {
   } = _ref,
       rest = _objectWithoutProperties(_ref, ["children", "className", "exact", "to", "href", "replace", "activeClassName", "match"]);
 
-  const path = to || href;
+  const path = to !== null && to !== void 0 ? to : href;
 
-  function onClick(event) {
+  const onClick = function onClick(event) {
     event.preventDefault();
     redirect(path, replace);
-  }
+  };
 
   if (isMatch(path, exact ? exact : path === "/") || match && isMatch(match, exact)) {
     className = "".concat(className, " ").concat(activeClassName).trim();

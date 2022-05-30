@@ -3,6 +3,6 @@
 /labs/
 /test/
 /index.html
-/index.js
+/index.tsx
 /karma.conf.js
 /rollup.config.js

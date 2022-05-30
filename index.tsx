@@ -1,15 +1,16 @@
-import React, { Component, cloneElement } from "react";
-import CSSTransition from "react-transition-group/CSSTransition";
+import React, {Component, cloneElement, AnchorHTMLAttributes} from "react";
+import CSSTransition, {CSSTransitionProps} from "react-transition-group/CSSTransition";
 import TransitionGroup from "react-transition-group/TransitionGroup";
+import {isReactElement} from "./utils";
 
-export const routes = [];
+export const routes: Route[] = [];
 
 // allow tests to override
 export const location = {
     path: () => window.location.pathname
 };
 
-export function isMatch(path, exact) {
+export function isMatch(path: string | null, exact = false) {
     if (!path) {
         return false;
     }
@@ -25,8 +26,16 @@ export function isMatch(path, exact) {
     return new RegExp(`^${path}`).test(location.path());
 }
 
-export class Route extends Component {
-    constructor(props) {
+type RouteProps = {
+    path: string;
+    exact?: boolean;
+    transition?: CSSTransitionProps
+    className?: string;
+    children: any;
+};
+
+export class Route extends Component<RouteProps> {
+    constructor(props: RouteProps) {
         super(props);
 
         this.onPopState = this.onPopState.bind(this);
@@ -57,6 +66,9 @@ export class Route extends Component {
             const params = getParams(path);
 
             childNodes = childNodes.map((child, i) => {
+                if (!isReactElement(child)) {
+                    return child;
+                }
                 if (typeof child.type === 'string' || child.type === Route) {
                     return child;
                 }
@@ -80,6 +92,7 @@ export class Route extends Component {
 
         return (
             <TransitionGroup>
+                {/* @ts-ignore */}
                 <CSSTransition
                     className={className}
                     transitionName={name}
@@ -88,7 +101,8 @@ export class Route extends Component {
                     transitionEnter={enter}
                     transitionEnterTimeout={enterTimeout}
                     transitionLeave={leave}
-                    transitionLeaveTimeout={leaveTimeout}>
+                    transitionLeaveTimeout={leaveTimeout}
+                    >
                 {childNodes}
                 </CSSTransition>
             </TransitionGroup>
@@ -96,9 +110,20 @@ export class Route extends Component {
     }
 }
 
-export function redirect(path, replace = false) {
-    window.history[replace ? 'replaceState' : 'pushState']({}, null, path);
+export function redirect(path: string, replace = false): void {
+    window.history[replace ? 'replaceState' : 'pushState']({}, "", path);
     routes.forEach(route => route.forceUpdate());
+}
+
+type LinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
+    children: React.ReactNode;
+    className?: string;
+    exact?: boolean;
+    to: string;
+    href?: string;
+    replace?: boolean;
+    activeClassName?: string;
+    match?: string | null;
 }
 
 export function Link({
@@ -111,10 +136,10 @@ export function Link({
     activeClassName = "active",
     match = null,
     ...rest
-}) {
-    const path = to || href;
+}: LinkProps) {
+    const path = to ?? href;
 
-    function onClick(event) {
+    const onClick: React.MouseEventHandler<HTMLAnchorElement> = function(event){
         event.preventDefault();
         redirect(path, replace);
     }
@@ -141,7 +166,7 @@ export function getCurrentPath() {
     return lastRoute ? lastRoute.props.path : '';
 }
 
-export function getParams(path) {
+export function getParams(path: string | null) {
     if (!path) {
         path = getCurrentPath();
     }
