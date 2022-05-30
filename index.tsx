@@ -137,16 +137,16 @@ type LinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
 }
 
 export function Link({
-                         children,
-                         className,
-                         exact = false,
-                         to,
-                         href,
-                         replace = false,
-                         activeClassName = "active",
-                         match = null,
-                         ...rest
-                     }: LinkProps) {
+         children,
+         className,
+         exact = false,
+         to,
+         href,
+         replace = false,
+         activeClassName = "active",
+         match = null,
+         ...rest
+     }: LinkProps) {
     const path = to ?? href;
 
     const onClick: React.MouseEventHandler<HTMLAnchorElement> = function (event) {
