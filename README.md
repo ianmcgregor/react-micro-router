@@ -6,7 +6,7 @@ Bare-bones router for React
 
 ## Features
 
-* Very minimal (~ 100 loc)
+* Very minimal (~ 200 loc)
 * Solid and uncomplicated for simple use-cases
 * Declarative API like react-router
 
@@ -102,6 +102,27 @@ function MyComponent(props) {
     <p>world</p>
 </div>
 
+```
+
+Use `ComponentRouteProps` to get access to `path` and `params` in your component when using TypeScript.
+
+```tsx
+import {ComponentRouteProps} from 'react-micro-router';
+
+type Props = ComponentRouteProps & {
+    text: string;
+}
+
+function MyComponent(props: Props) {
+    const {path, params} = props.route;
+    return (
+        <div>
+            <p>{path}</p>
+            <p>{params[0]}</p>
+            <p>{props.text}</p>
+        </div>
+    );
+}
 ```
 
 #### Transitions (see [react-transition-group](https://github.com/reactjs/react-transition-group) for details)
