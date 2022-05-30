@@ -1,6 +1,12 @@
 import React, { Component, AnchorHTMLAttributes } from "react";
 import { CSSTransitionProps } from "react-transition-group/CSSTransition";
 export declare const routes: Route[];
+export declare type ComponentRouteProps = {
+    route: {
+        path: string;
+        params: string[];
+    };
+};
 export declare const location: {
     path: () => string;
 };

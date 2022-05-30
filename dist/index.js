@@ -40,9 +40,9 @@ function _objectWithoutProperties(source, excluded) { if (source == null) return
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
 
-const routes = []; // allow tests to override
-
+const routes = [];
 exports.routes = routes;
+// allow tests to override
 const location = {
   path: () => window.location.pathname
 };
