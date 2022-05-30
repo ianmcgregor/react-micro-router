@@ -5,6 +5,11 @@ import {isReactElement} from "./utils";
 
 export const routes: Route[] = [];
 
+export type ComponentRouteProps = {
+    path: string;
+    params: string[]
+}
+
 // allow tests to override
 export const location = {
     path: () => window.location.pathname
@@ -72,7 +77,10 @@ export class Route extends Component<RouteProps> {
                 if (typeof child.type === 'string' || child.type === Route) {
                     return child;
                 }
-                return cloneElement(child, {key: `child${i}`, route: {params, path}});
+                return cloneElement<{ key: string, route: ComponentRouteProps }>(child, {
+                    key: `child${i}`,
+                    route: {params, path}
+                })
             });
         }
 
@@ -102,8 +110,8 @@ export class Route extends Component<RouteProps> {
                     transitionEnterTimeout={enterTimeout}
                     transitionLeave={leave}
                     transitionLeaveTimeout={leaveTimeout}
-                    >
-                {childNodes}
+                >
+                    {childNodes}
                 </CSSTransition>
             </TransitionGroup>
         );
@@ -127,19 +135,19 @@ type LinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
 }
 
 export function Link({
-    children,
-    className,
-    exact = false,
-    to,
-    href,
-    replace = false,
-    activeClassName = "active",
-    match = null,
-    ...rest
-}: LinkProps) {
+                         children,
+                         className,
+                         exact = false,
+                         to,
+                         href,
+                         replace = false,
+                         activeClassName = "active",
+                         match = null,
+                         ...rest
+                     }: LinkProps) {
     const path = to ?? href;
 
-    const onClick: React.MouseEventHandler<HTMLAnchorElement> = function(event){
+    const onClick: React.MouseEventHandler<HTMLAnchorElement> = function (event) {
         event.preventDefault();
         redirect(path, replace);
     }
