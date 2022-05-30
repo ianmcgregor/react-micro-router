@@ -6,8 +6,10 @@ import {isReactElement} from "./utils";
 export const routes: Route[] = [];
 
 export type ComponentRouteProps = {
-    path: string;
-    params: string[]
+    route: {
+        path: string;
+        params: string[]
+    }
 }
 
 // allow tests to override
@@ -77,7 +79,7 @@ export class Route extends Component<RouteProps> {
                 if (typeof child.type === 'string' || child.type === Route) {
                     return child;
                 }
-                return cloneElement<{ key: string, route: ComponentRouteProps }>(child, {
+                return cloneElement<{ key: string } & ComponentRouteProps>(child, {
                     key: `child${i}`,
                     route: {params, path}
                 })
