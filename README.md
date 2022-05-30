@@ -104,6 +104,27 @@ function MyComponent(props) {
 
 ```
 
+Use `ComponentRouteProps` to get access to `path` and `params` in your component when using TypeScript.
+
+```tsx
+import {ComponentRouteProps} from 'react-micro-router';
+
+type Props = ComponentRouteProps & {
+    text: string;
+}
+
+function MyComponent(props: Props) {
+    const {path, params} = props.route;
+    return (
+        <div>
+            <p>{path}</p>
+            <p>{params[0]}</p>
+            <p>{props.text}</p>
+        </div>
+    );
+}
+```
+
 #### Transitions (see [react-transition-group](https://github.com/reactjs/react-transition-group) for details)
 
 ```javascript
