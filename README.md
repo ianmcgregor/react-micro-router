@@ -6,7 +6,7 @@ Bare-bones router for React
 
 ## Features
 
-* Very minimal (~ 100 loc)
+* Very minimal (~ 200 loc)
 * Solid and uncomplicated for simple use-cases
 * Declarative API like react-router
 
