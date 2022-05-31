@@ -104,13 +104,16 @@ function MyComponent(props) {
 
 ```
 
+#### TypeScript
+
 Use `ComponentRouteProps` to get access to `path` and `params` in your component when using TypeScript.
 
 ```tsx
 import {ComponentRouteProps} from 'react-micro-router';
 
-type Props = ComponentRouteProps & {
+type Props = {
     text: string;
+    route: ComponentRouteProps
 }
 
 function MyComponent(props: Props) {
@@ -121,6 +124,29 @@ function MyComponent(props: Props) {
             <p>{params[0]}</p>
             <p>{props.text}</p>
         </div>
+    );
+}
+```
+
+Note: when calling the component Typescript will complain about the props not being present. To avoid this, either 
+allow an undefined `route` prop:
+
+```ts
+type Props = {
+  text: string;
+  route?: ComponentRouteProps;
+}
+```
+
+Or use a function as a child to render child components:
+
+```tsx
+function Router(props) {
+  
+    return (
+        <Route>
+          {(route) => <ChildComponent route={route} otherProp={false} />}
+        </Route>
     );
 }
 ```

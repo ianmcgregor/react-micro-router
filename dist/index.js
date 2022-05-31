@@ -26,8 +26,6 @@ var _CSSTransition = _interopRequireDefault(require("react-transition-group/CSST
 
 var _TransitionGroup = _interopRequireDefault(require("react-transition-group/TransitionGroup"));
 
-var _utils = require("./utils");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
@@ -95,27 +93,39 @@ class Route extends _react.Component {
       className
     } = this.props;
     const active = isMatch(path, exact);
-    let childNodes = active ? _react.default.Children.toArray(children) : [];
+    let childNodes;
 
-    if (childNodes.length) {
-      const params = getParams(path);
-      childNodes = childNodes.map((child, i) => {
-        if (!(0, _utils.isReactElement)(child)) {
-          return child;
-        }
+    if (!active) {
+      childNodes = [];
+    } else if (typeof children === "function") {
+      const childProps = {
+        params: getParams(path),
+        path
+      };
+      childNodes = children(childProps);
+    } else {
+      childNodes = _react.default.Children.toArray(children);
 
-        if (typeof child.type === 'string' || child.type === Route) {
-          return child;
-        }
-
-        return /*#__PURE__*/(0, _react.cloneElement)(child, {
-          key: "child".concat(i),
-          route: {
-            params,
-            path
+      if (childNodes.length) {
+        const params = getParams(path);
+        childNodes = childNodes.map((child, i) => {
+          if (! /*#__PURE__*/(0, _react.isValidElement)(child)) {
+            return child;
           }
+
+          if (typeof child.type === 'string' || child.type === Route) {
+            return child;
+          }
+
+          return /*#__PURE__*/(0, _react.cloneElement)(child, {
+            key: "child".concat(i),
+            route: {
+              params,
+              path
+            }
+          });
         });
-      });
+      }
     }
 
     if (!transition) {

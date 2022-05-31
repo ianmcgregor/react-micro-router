@@ -80,6 +80,35 @@ describe("Route with params", () => {
     });
 });
 
+describe('route with function as a child', () => {
+    beforeAll(() => {
+        changeURL("/mocked/faac")
+
+        wrapper = enzyme.mount(
+          <div>
+              <Route path="/mocked/no">
+                  {() => <div>Hidden</div>}
+              </Route>
+              <Route path="/mocked/faac">
+                  {(route) => <div>{route.path}</div>}
+              </Route>
+          </div>
+        )
+    })
+
+    afterAll(() => {
+        wrapper.unmount();
+    });
+
+    it("should not display hidden div", () => {
+        expect(wrapper.contains(<div>Hidden</div>)).toBe(false);
+    });
+
+    it("should pass props via faac", () => {
+        expect(wrapper.contains(<div>/mocked/faac</div>)).toBe(true);
+    })
+});
+
 describe("Nested route", () => {
     beforeAll(() => {
         changeURL("/mocked/child");
