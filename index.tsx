@@ -1,7 +1,6 @@
-import React, {Component, cloneElement, AnchorHTMLAttributes} from "react";
+import React, {Component, cloneElement, AnchorHTMLAttributes, isValidElement} from "react";
 import CSSTransition, {CSSTransitionProps} from "react-transition-group/CSSTransition";
 import TransitionGroup from "react-transition-group/TransitionGroup";
-import {isReactElement} from "./utils";
 
 export const routes: Route[] = [];
 
@@ -73,7 +72,7 @@ export class Route extends Component<RouteProps> {
             const params = getParams(path);
 
             childNodes = childNodes.map((child, i) => {
-                if (!isReactElement(child)) {
+                if (!isValidElement(child)) {
                     return child;
                 }
                 if (typeof child.type === 'string' || child.type === Route) {

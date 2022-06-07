@@ -26,8 +26,6 @@ var _CSSTransition = _interopRequireDefault(require("react-transition-group/CSST
 
 var _TransitionGroup = _interopRequireDefault(require("react-transition-group/TransitionGroup"));
 
-var _utils = require("./utils");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
@@ -100,7 +98,7 @@ class Route extends _react.Component {
     if (childNodes.length) {
       const params = getParams(path);
       childNodes = childNodes.map((child, i) => {
-        if (!(0, _utils.isReactElement)(child)) {
+        if (! /*#__PURE__*/(0, _react.isValidElement)(child)) {
           return child;
         }
 
