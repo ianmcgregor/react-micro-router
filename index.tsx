@@ -5,10 +5,8 @@ import TransitionGroup from "react-transition-group/TransitionGroup";
 export const routes: Route[] = [];
 
 export type ComponentRouteProps = {
-    route: {
-        path: string;
-        params: string[]
-    }
+    path: string;
+    params: string[]
 }
 
 // allow tests to override
@@ -37,7 +35,7 @@ type RouteProps = {
     exact?: boolean;
     transition?: CSSTransitionProps
     className?: string;
-    children: any;
+    children: React.ReactNode | ((props: ComponentRouteProps) => JSX.Element);
 };
 
 export class Route extends Component<RouteProps> {

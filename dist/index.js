@@ -93,6 +93,7 @@ class Route extends _react.Component {
       className
     } = this.props;
     const active = isMatch(path, exact);
+
     let childNodes = active ? _react.default.Children.toArray(children) : [];
 
     if (childNodes.length) {
@@ -112,8 +113,16 @@ class Route extends _react.Component {
             params,
             path
           }
+
+          return /*#__PURE__*/(0, _react.cloneElement)(child, {
+            key: "child".concat(i),
+            route: {
+              params,
+              path
+            }
+          });
         });
-      });
+      }
     }
 
     if (!transition) {

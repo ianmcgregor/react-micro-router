@@ -80,6 +80,80 @@ describe("Route with params", () => {
     });
 });
 
+describe('child route prop', () => {
+    const ComponentA = (props) =>
+      <div>
+          <span>{props.route.path}</span>
+          <span>{props.route.params[0]}</span>
+      </div>
+
+    const ComponentB = (props) =>
+      <div>
+          {props.route.path} - B
+      </div>
+
+    beforeAll(() => {
+        changeURL(`/mocked?q="test"`);
+
+        wrapper = enzyme.mount(
+          <div>
+              <Route path="/mocked(.*)">
+                  <ComponentA />
+                  <ComponentB />
+              </Route>
+          </div>
+        )
+    })
+
+    afterAll(() => {
+        wrapper.unmount();
+    })
+
+    it("passes route props to child all components", () => {
+        expect(wrapper.contains(
+          <div>
+              <span>/mocked(.*)</span>
+              <span>?q="test"</span>
+          </div>)
+        ).toBe(true);
+
+        expect(wrapper.contains(
+          <div>
+              /mocked(.*) - B
+          </div>
+        ))
+    })
+});
+
+describe('route with function as a child', () => {
+    beforeAll(() => {
+        changeURL("/mocked/faac")
+
+        wrapper = enzyme.mount(
+          <div>
+              <Route path="/mocked/no">
+                  {() => <div>Hidden</div>}
+              </Route>
+              <Route path="/mocked/faac">
+                  {(route) => <div>{route.path}</div>}
+              </Route>
+          </div>
+        )
+    })
+
+    afterAll(() => {
+        wrapper.unmount();
+    });
+
+    it("should not display hidden div", () => {
+        expect(wrapper.contains(<div>Hidden</div>)).toBe(false);
+    });
+
+    it("should pass props via faac", () => {
+        expect(wrapper.contains(<div>/mocked/faac</div>)).toBe(true);
+    })
+});
+
 describe("Nested route", () => {
     beforeAll(() => {
         changeURL("/mocked/child");
