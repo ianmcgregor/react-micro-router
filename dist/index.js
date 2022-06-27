@@ -93,28 +93,25 @@ class Route extends _react.Component {
       className
     } = this.props;
     const active = isMatch(path, exact);
-    let childNodes;
 
-    if (!active) {
-      childNodes = [];
-    } else if (typeof children === "function") {
-      const childProps = {
-        params: getParams(path),
-        path
-      };
-      childNodes = children(childProps);
-    } else {
-      childNodes = _react.default.Children.toArray(children);
+    let childNodes = active ? _react.default.Children.toArray(children) : [];
 
-      if (childNodes.length) {
-        const params = getParams(path);
-        childNodes = childNodes.map((child, i) => {
-          if (! /*#__PURE__*/(0, _react.isValidElement)(child)) {
-            return child;
-          }
+    if (childNodes.length) {
+      const params = getParams(path);
+      childNodes = childNodes.map((child, i) => {
+        if (! /*#__PURE__*/(0, _react.isValidElement)(child)) {
+          return child;
+        }
 
-          if (typeof child.type === 'string' || child.type === Route) {
-            return child;
+        if (typeof child.type === 'string' || child.type === Route) {
+          return child;
+        }
+
+        return /*#__PURE__*/(0, _react.cloneElement)(child, {
+          key: "child".concat(i),
+          route: {
+            params,
+            path
           }
 
           return /*#__PURE__*/(0, _react.cloneElement)(child, {
