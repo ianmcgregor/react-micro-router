@@ -1,15 +1,12 @@
-import React, {Component, cloneElement, AnchorHTMLAttributes} from "react";
+import React, { Component, cloneElement, AnchorHTMLAttributes, isValidElement } from "react";
 import CSSTransition, {CSSTransitionProps} from "react-transition-group/CSSTransition";
 import TransitionGroup from "react-transition-group/TransitionGroup";
-import {isReactElement} from "./utils";
 
 export const routes: Route[] = [];
 
 export type ComponentRouteProps = {
-    route: {
-        path: string;
-        params: string[]
-    }
+    path: string;
+    params: string[]
 }
 
 // allow tests to override
@@ -38,7 +35,7 @@ type RouteProps = {
     exact?: boolean;
     transition?: CSSTransitionProps
     className?: string;
-    children: any;
+    children: React.ReactNode | ((props: ComponentRouteProps) => JSX.Element);
 };
 
 export class Route extends Component<RouteProps> {
@@ -67,23 +64,36 @@ export class Route extends Component<RouteProps> {
 
         const active = isMatch(path, exact);
 
-        let childNodes = active ? React.Children.toArray(children) : [];
+        let childNodes;
 
-        if (childNodes.length) {
-            const params = getParams(path);
+        if (!active) {
+            childNodes = []
+        } else if (typeof children === "function") {
+            const childProps: ComponentRouteProps = {
+                params: getParams(path),
+                path,
+            }
 
-            childNodes = childNodes.map((child, i) => {
-                if (!isReactElement(child)) {
-                    return child;
-                }
-                if (typeof child.type === 'string' || child.type === Route) {
-                    return child;
-                }
-                return cloneElement<{ key: string } & ComponentRouteProps>(child, {
-                    key: `child${i}`,
-                    route: {params, path}
-                })
-            });
+            childNodes = children(childProps);
+        } else {
+            childNodes = React.Children.toArray(children);
+
+            if (childNodes.length) {
+                const params = getParams(path);
+
+                childNodes = childNodes.map((child, i) => {
+                    if (!isValidElement(child)) {
+                        return child;
+                    }
+                    if (typeof child.type === 'string' || child.type === Route) {
+                        return child;
+                    }
+                    return cloneElement<{ key: string, route: ComponentRouteProps }>(child, {
+                        key: `child${i}`,
+                        route: { params, path }
+                    })
+                });
+            }
         }
 
         if (!transition) {
