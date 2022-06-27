@@ -1,6 +1,6 @@
 {
   "name": "react-micro-router",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Bare-bones router for React",
   "main": "dist/index.js",
   "scripts": {

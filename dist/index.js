@@ -71,12 +71,12 @@ class Route extends _react.Component {
   }
 
   UNSAFE_componentWillMount() {
-    window.addEventListener('popstate', this.onPopState);
+    window.addEventListener("popstate", this.onPopState);
     routes.push(this);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('popstate', this.onPopState);
+    window.removeEventListener("popstate", this.onPopState);
     routes.splice(routes.indexOf(this), 1);
   }
 
@@ -93,25 +93,28 @@ class Route extends _react.Component {
       className
     } = this.props;
     const active = isMatch(path, exact);
+    let childNodes;
 
-    let childNodes = active ? _react.default.Children.toArray(children) : [];
+    if (!active) {
+      childNodes = [];
+    } else if (typeof children === "function") {
+      const childProps = {
+        params: getParams(path),
+        path
+      };
+      childNodes = children(childProps);
+    } else {
+      childNodes = _react.default.Children.toArray(children);
 
-    if (childNodes.length) {
-      const params = getParams(path);
-      childNodes = childNodes.map((child, i) => {
-        if (! /*#__PURE__*/(0, _react.isValidElement)(child)) {
-          return child;
-        }
+      if (childNodes.length) {
+        const params = getParams(path);
+        childNodes = childNodes.map((child, i) => {
+          if (! /*#__PURE__*/(0, _react.isValidElement)(child)) {
+            return child;
+          }
 
-        if (typeof child.type === 'string' || child.type === Route) {
-          return child;
-        }
-
-        return /*#__PURE__*/(0, _react.cloneElement)(child, {
-          key: "child".concat(i),
-          route: {
-            params,
-            path
+          if (typeof child.type === "string" || child.type === Route) {
+            return child;
           }
 
           return /*#__PURE__*/(0, _react.cloneElement)(child, {
@@ -158,7 +161,7 @@ exports.Route = Route;
 
 function redirect(path) {
   let replace = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-  window.history[replace ? 'replaceState' : 'pushState']({}, "", path);
+  window.history[replace ? "replaceState" : "pushState"]({}, "", path);
   routes.forEach(route => route.forceUpdate());
 }
 
@@ -195,7 +198,7 @@ function Link(_ref) {
 
 function getCurrentPath() {
   const lastRoute = routes.filter(route => isMatch(route.props.path, !!route.props.exact)).pop();
-  return lastRoute ? lastRoute.props.path : '';
+  return lastRoute ? lastRoute.props.path : "";
 }
 
 function getParams(path) {
