@@ -11,7 +11,10 @@
   "keywords": [],
   "author": "",
   "jest": {
-    "testURL": "http://localhost"
+    "testEnvironment": "jsdom",
+    "testEnvironmentOptions": {
+      "url": "http://localhost"
+    }
   },
   "license": "ISC",
   "repository": {
@@ -24,22 +27,21 @@
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
     "@babel/preset-typescript": "^7.17.12",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.5.1",
+    "@types/jest": "^29.5.7",
     "@types/react": "^18.0.9",
     "@types/react-transition-group": "^4.4.4",
-    "@wojtekmaj/enzyme-adapter-react-17": "^0.4.1",
     "babel-eslint": "^10.1.0",
-    "chai": "^4.2.0",
-    "enzyme": "^3.11.0",
     "eslint-plugin-react": "^7.22.0",
-    "jest": "^26.6.3",
-    "mocha": "^8.2.1",
-    "react-dom": "17.0.1",
-    "typescript": "^4.7.2"
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "react-dom": "^18.0.0",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.12.1",
     "core-js": "^3.8.3",
-    "react": "17.0.1",
+    "react": "^18.0.0",
     "react-transition-group": "^4.4.1"
   }
 }
