@@ -48,13 +48,12 @@ type RouteProps = {
 export class Route extends Component<RouteProps> {
   constructor(props: RouteProps) {
     super(props);
-
     this.onPopState = this.onPopState.bind(this);
+    routes.push(this);
   }
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     window.addEventListener("popstate", this.onPopState);
-    routes.push(this);
   }
 
   componentWillUnmount() {
@@ -96,6 +95,7 @@ export class Route extends Component<RouteProps> {
             return child;
           }
           return cloneElement<{ key: string; route: ComponentRouteProps }>(
+            // @ts-expect-error - no overload types.npm run bu
             child,
             {
               key: `child${i}`,
