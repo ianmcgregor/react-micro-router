@@ -96,7 +96,7 @@ class Route extends _react.Component {
             return child;
           }
           return /*#__PURE__*/(0, _react.cloneElement)(
-          // @ts-expect-error - no overload types.
+          // @ts-expect-error - no overload types.npm run bu
           child, {
             key: "child".concat(i),
             route: {
